@@ -850,7 +850,7 @@ if ( ! class_exists( 'Better_User_Search' ) ) {
 
 
 
-
+///گرفتن اکشن تکمیل سفارش  و ارسال پورسانت به حساب معرف
 add_action( 'woocommerce_order_status_completed', 'your_function', 10,120);
 function your_function($order_id) {
 

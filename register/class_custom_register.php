@@ -175,7 +175,7 @@ class class_custom_register {
 
 
 
-
+//////ارسال پورسانت به حساب معرف بعد از ثبت نام کاربر معرفی شده توسط معرف ر 
                  if (class_exists('Referral_Main'))
                     {
 
