@@ -4,7 +4,29 @@
 add_action('product_cat_edit_form_fields','taxonomy_edit_form_fields');
 function taxonomy_edit_form_fields () {
     ?>
-    <tr class="form-field">
+    <tr>
+        <th colspan="2">
+            <hr>
+        </th>
+    </tr>
+    <tr>
+        <th >
+            <a style="cursor: pointer" onclick="category_time()">
+                کلیک کنید
+            </a>
+        </th>
+        <td>
+            <p>
+                این بخش نیازمند فعال سازی
+                <a target="_blank" href="http://mr2app.com/blog/shop-time/">
+                    ماژول چیدمان سفارشی دسته بندی محصولات در اپلیکیشن
+                </a>
+                ، در اپلیکیشن می باشد.
+            </p>
+
+        </td>
+    </tr>
+    <tr style="display: none;" class="category_time form-field">
         <?php
         $x = get_option("woo2app_product_cat_".$_GET['tag_ID']);
         ?>
@@ -22,7 +44,7 @@ function taxonomy_edit_form_fields () {
             </div>
         </td>
     </tr>
-    <tr class="form-field">
+    <tr style="display: none;" class="category_time form-field">
         <th valign="top" scope="row">
             <label for="catpic"> یک شنبه </label>
         </th>
@@ -35,7 +57,7 @@ function taxonomy_edit_form_fields () {
             </div>
         </td>
     </tr>
-    <tr class="form-field">
+    <tr style="display: none;" class="category_time form-field">
         <th valign="top" scope="row">
             <label for="catpic"> دو شنبه </label>
         </th>
@@ -51,7 +73,7 @@ function taxonomy_edit_form_fields () {
             </div>
         </td>
     </tr>
-    <tr class="form-field">
+    <tr style="display: none;" class="category_time form-field">
         <th valign="top" scope="row">
             <label for="catpic"> سه شنبه </label>
         </th>
@@ -67,7 +89,7 @@ function taxonomy_edit_form_fields () {
             </div>
         </td>
     </tr>
-    <tr class="form-field">
+    <tr style="display: none;" class="category_time form-field">
         <th valign="top" scope="row">
             <label for="catpic"> چهار شنبه </label>
         </th>
@@ -80,7 +102,7 @@ function taxonomy_edit_form_fields () {
             </div>
         </td>
     </tr>
-    <tr class="form-field">
+    <tr style="display: none;" class="category_time form-field">
         <th valign="top" scope="row">
             <label for="catpic"> پنج شنبه </label>
         </th>
@@ -93,7 +115,7 @@ function taxonomy_edit_form_fields () {
             </div>
         </td>
     </tr>
-    <tr class="form-field">
+    <tr style="display: none;" class="category_time form-field">
         <th valign="top" scope="row">
             <label for="catpic"> جمعه </label>
         </th>
@@ -106,6 +128,26 @@ function taxonomy_edit_form_fields () {
             </div>
         </td>
     </tr>
+    <tr style="display: none;" class="category_time form-field">
+        <th colspan="2">
+            <a style="cursor: pointer" onclick="close_category_time()">
+                بستن
+            </a>
+        </th>
+    </tr>
+    <th colspan="2">
+        <hr>
+    </th>
+
+    <script>
+        function category_time(){
+            jQuery(".category_time").removeAttr('style')
+        }
+        function close_category_time() {
+            jQuery(".category_time").attr('style','display:none')
+        }
+    </script>
+
     <?php
 }
 
@@ -205,11 +247,15 @@ function woocats(){
     header('Content-Type: application/json; charset=utf-8');
     ob_start();
     $product_categories = array();
-    $terms = get_terms(  'product_cat', array( 'hide_empty' => false, 'fields' => 'ids' ) );
+    $terms = get_terms(  'product_cat' );
+    //var_dump($terms);
     foreach ( $terms as $term_id ) {
-        $product_categories[] = current( get_product_category( $term_id ) );
+        //var_dump($term_id);
+        $product_categories[] =   get_product_category($term_id)  ;
     }
-    $array = array( 'product_categories' => apply_filters( 'woocommerce_api_product_categories_response', $product_categories, $terms, '', $this ) );
+    //var_dump($product_categories);
+    //return;
+    $array = array( 'product_categories' => $product_categories );
     date_default_timezone_set('Asia/Tehran');
     $array['long_time'] = time();
     $array['date_time'] = date('Y/m/d H:i:s');
@@ -217,12 +263,14 @@ function woocats(){
     echo json_encode($array);
 }
 
-function get_product_category( $id, $fields = null ) {
-    $term = get_term( $id, 'product_cat' );
-    if ( is_wp_error( $term ) || is_null( $term ) ) {
-        return 0;
-    }
-    $term_id = intval( $term->term_id );
+function get_product_category( $term, $fields = null ) {
+
+    //return $term->term_id;
+    //$term = get_term( $id, 'product_cat' );
+    // if ( is_wp_error( $term ) || is_null( $term ) ) {
+    //     return 0;
+    // }
+    $term_id = $term->term_id;
 
     // Get category display type
     $display_type = get_woocommerce_term_meta( $term_id, 'display_type' );
@@ -233,13 +281,14 @@ function get_product_category( $id, $fields = null ) {
         $image = wp_get_attachment_url( $image_id );
     }
 
+    //return $term_id;
     date_default_timezone_set('Asia/Tehran');
 
     $today = date("w");
     $h = date('H.i');
     //echo $ds_schedule = $this->ds_schedule($term_id);
 
-    $product_category = array(
+    return $product_category = array(
         'id'          => $term_id,
         'name'        => $term->name,
         'slug'        => $term->slug,
@@ -252,7 +301,7 @@ function get_product_category( $id, $fields = null ) {
         'ds_schedule' => ds_schedule($term_id , $today),
         'image2' => get_option('z_taxonomy_image'.$term_id),
     );
-    return array( 'product_category' => apply_filters( 'woocommerce_api_product_category_response', $product_category, $id, $fields, $term, $this ) );
+    //return array( 'product_category' => apply_filters( 'woocommerce_api_product_category_response', $product_category, $id, $fields, $term, $this ) );
 }
 
 function ds_schedule($id , $today){
@@ -354,3 +403,4 @@ function get_parent_schedule( $id , $today ,$h){
     if($cat->parent == 0) return 1;
     return is_schedule($cat->parent , $today ,$h);
 }
+?>

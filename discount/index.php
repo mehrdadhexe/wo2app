@@ -24,8 +24,8 @@ else $tab = 'rules';
 
     <p>
         این بخش نیازمند فعال سازی
-        <a target="_blank" href="http://mr2app.com/blog/discount-module">
-            ماژول تخفیف
+        <a target="_blank" href="http://mr2app.com/blog/woocommerce-user-discount/">
+            ماژول تخفیف کاربر
         </a>
         ، در اپلیکیشن می باشد.
     </p>

@@ -21,14 +21,14 @@ if(isset($_POST['submit_update'])){
         update_option('woo2app_inviter_setting' , $update);
     }
 
-    $update['enable_after_register'] = $_POST['enable_after_register'] == 'on' ? true : false;
+    $update['enable_after_register'] = (isset($_POST['enable_after_register']) && $_POST['enable_after_register'] == 'on' ) ? true : false;
     $update['inviter_title'] = $_POST['inviter_title'] ;
     $update['inviter_description'] = $_POST['inviter_description'] ;
-    $update['display_score_in_menu'] = $_POST['display_score_in_menu'] == 'on' ? true : false;
+    $update['display_score_in_menu'] = (isset($_POST['display_score_in_menu']) && $_POST['display_score_in_menu'] == 'on') ? true : false;
     $update['score_value_for_inviter'] = $_POST['score_value_for_inviter'] ;
     $update['score_type'] = $_POST['score_type'] ;
     $update['score_user_title'] = $_POST['score_user_title'] ;
-    $update['display_marketer_code'] = $_POST['display_marketer_code'] == 'on' ? true : false;
+    $update['display_marketer_code'] = (isset($_POST['display_marketer_code']) && $_POST['display_marketer_code'] == 'on' ) ? true : false;
     $update['marketer_title'] = $_POST['marketer_title'] ;
     $update['type_make_code'] = $_POST['type_make_code'] ;
     update_option('woo2app_inviter_setting' , $update);
@@ -60,8 +60,8 @@ if(isset($_POST['submit_update'])){
     </h1>
     <p>
         این بخش نیازمند فعال سازی
-        <a target="_blank" href="http://mr2app.com/blog/inviter">
-            ماژول کد معرف
+        <a target="_blank" href="http://mr2app.com/blog/woocommerce-marketing/">
+            ماژول همکاری در فروش
         </a>
         ، در اپلیکیشن می باشد.
     </p>

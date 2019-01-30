@@ -67,7 +67,7 @@ if(isset($_REQUEST["submit_edit"])){
     update_option('mr2app_cat_'.$count,json_encode($array));
 }
 
-if($_POST['submit']){
+if(isset($_POST['submit'])){
     if($_REQUEST["product_cat"]){
         global $wpdb;
         $table_name = $wpdb->prefix . "options";
@@ -129,11 +129,24 @@ if(isset($_GET['action']) && isset($_GET['id'])){
 }
 ?>
 <div class="wrap">
+    <p>
+
+        این بخش نیازمند فعال سازی
+
+        <a target="_blank" href="http://mr2app.com/blog/woo2app-custom-category">
+
+            ماژول چیدمان سفارشی دسته بندی محصولات
+
+        </a>
+
+        ، در اپلیکیشن می باشد.
+
+    </p>
     <div id="col-container" class="wp-clearfix">
         <div id="col-left">
             <div class="col-wrap">
                 <div class="form-wrap">
-                    <h2>افزودن دسته بندی دراپلیکشین </h2>
+                    <h1>افزودن دسته بندی دراپلیکشین </h1>
                     <form id="addtag" method="post" action="" class="validate">
                         <!--                    <input type="hidden" name="hidden_edit" value="--><?//= $current_id;?><!--">-->
                         <div class="form-field form-required term-name-wrap">

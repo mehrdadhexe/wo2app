@@ -32,7 +32,8 @@ if(!class_exists( 'mr2app_custom_category' )){
                 $display_type = get_woocommerce_term_meta( $category->term_id, 'display_type' );
                 $image = '';
                 if ( $image_id = get_woocommerce_term_meta( $category->term_id, 'thumbnail_id' ) ) {
-                    $image = wp_get_attachment_url( $image_id );
+                    $image2 = wp_get_attachment_image_src( $image_id ,'medium' );
+                    $image=$image2['0'];
                 }
                 $parent = explode('_',$r->option_name);
                 $cats[] = array(

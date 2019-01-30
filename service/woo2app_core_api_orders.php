@@ -174,6 +174,7 @@ class woo2app_core_api_orders{
                     $order->save_meta_data();
                 }
                 add_post_meta($id, 'woo_order_type', 'سفارش از طریق اپ');
+                add_post_meta($id, 'woo_order_key_type', 'app'); 
                 add_post_meta($id, '_buyer_sms_notify', 'yes');
                 add_post_meta($id, '_allow_buyer_select_pm_type', 'no');
                 add_post_meta($id, '_allow_buyer_select_status', 'no');
@@ -310,7 +311,9 @@ class woo2app_core_api_orders{
                     'user_password' => $user_pass[1],
                     'remember'      => false
                 );
-                $user = wp_signon( $user, false );
+                //$user = wp_signon( $user, false );
+                $user = get_user_by('login' , $user_pass[0]);
+                wp_set_current_user($user->ID,$user_pass[0]);
             }
 
             $order = wc_get_order($_GET['order_id']);
@@ -382,7 +385,7 @@ class woo2app_core_api_orders{
         }
         // set is vat exempt
         if ( isset( $data['is_vat_exempt'] ) ) {
-            update_post_meta( $order->id, '_is_vat_exempt', $data['is_vat_exempt'] ? 'yes' : 'no' );
+            update_post_meta( $order->get_id(), '_is_vat_exempt', $data['is_vat_exempt'] ? 'yes' : 'no' );
         }
         // calculate totals and set them
         $order->calculate_totals();
@@ -392,8 +395,8 @@ class woo2app_core_api_orders{
             if ( empty( $data['payment_details']['method_id'] ) || empty( $data['payment_details']['method_title'] ) ) {
                 throw new WC_API_Exception( 'woocommerce_invalid_payment_details', __( 'Payment method ID and title are required', 'woocommerce' ), 400 );
             }
-            update_post_meta( $order->id, '_payment_method', $data['payment_details']['method_id'] );
-            update_post_meta( $order->id, '_payment_method_title', $data['payment_details']['method_title'] );
+            update_post_meta( $order->get_id(), '_payment_method', $data['payment_details']['method_id'] );
+            update_post_meta( $order->get_id(), '_payment_method_title', $data['payment_details']['method_title'] );
             // mark as paid if set
             if ( isset( $data['payment_details']['paid'] ) && true === $data['payment_details']['paid'] ) {
                 $order->payment_complete( isset( $data['payment_details']['transaction_id'] ) ? $data['payment_details']['transaction_id'] : '' );
@@ -404,19 +407,19 @@ class woo2app_core_api_orders{
             if ( ! array_key_exists( $data['currency'], get_woocommerce_currencies() ) ) {
                 throw new WC_API_Exception( 'woocommerce_invalid_order_currency', __( 'Provided order currency is invalid', 'woocommerce'), 400 );
             }
-            update_post_meta( $order->id, '_order_currency', $data['currency'] );
+            update_post_meta( $order->get_id(), '_order_currency', $data['currency'] );
         }
         // set order meta
         if ( isset( $data['order_meta'] ) && is_array( $data['order_meta'] ) ) {
-            $this->set_order_meta( $order->id, $data['order_meta'] );
+            $this->set_order_meta( $order->get_id(), $data['order_meta'] );
         }
         // HTTP 201 Created
         //$this->server->send_status( 201 );
-        wc_delete_shop_order_transients( $order->id );
-        do_action( 'woocommerce_api_create_order', $order->id, $data, $this );
+        wc_delete_shop_order_transients( $order->get_id() );
+        do_action( 'woocommerce_api_create_order', $order->get_id(), $data, $this );
         //do_action( 'woocommerce_order_status_changed', $order->id , 10, 3 );
         wc_transaction_query( 'commit' );
-        return $this->get_order( $order->id );
+        return $this->get_order( $order->get_id() );
         // } catch ( WC_API_Exception $e ) {
         // 	wc_transaction_query( 'rollback' );
         // 	return new WP_Error( $e->getErrorCode(), $e->getMessage(), array( 'status' => $e->getCode() ) );
@@ -501,7 +504,7 @@ class woo2app_core_api_orders{
             $expand = explode( ',', $filter['expand'] );
         }
         $order_data = array(
-            'id'                        => $order->id,
+            'id'                        => $order->get_id(),
             //'order_number'              => $order->get_order_number(),
             'order_key'                 => $order->order_key,
             'date_created'                => strtotime($this->format_datetime( $order_post->post_date_gmt )),
@@ -553,7 +556,7 @@ class woo2app_core_api_orders{
             $product_sku = null;
             // Check if the product exists.
             if ( is_object( $product ) ) {
-                $product_id  = ( isset( $product->variation_id ) ) ? $product->variation_id : $product->id;
+                $product_id  = ( isset( $product->variation_id ) ) ? $product->variation_id : $product->get_id();
                 $product_sku = $product->get_sku();
             }
             $meta = new WC_Order_Item_Meta( $item, $product );

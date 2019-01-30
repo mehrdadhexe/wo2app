@@ -53,7 +53,7 @@ $roles = wp_roles();
                 <label > اسلاگ - نام یکتا </label>
             </th>
             <td class="forminp">
-                <input type="text" value="<?= $for_edit['value'];?>"  name="value" id="value"  placeholder=" اسلاگ - نام یکتا" >
+                <input type="text"   name="value" id="value"  placeholder=" اسلاگ - نام یکتا" >
             </td>
         </tr>
 
@@ -62,7 +62,7 @@ $roles = wp_roles();
                 <label > برچسب نقش </label>
             </th>
             <td class="forminp">
-                <input type="text" value="<?= $for_edit['label'];?>"  name="label" id="label"  placeholder="  برچسب نقش " >
+                <input type="text"   name="label" id="label"  placeholder="  برچسب نقش " >
             </td>
         </tr>
 

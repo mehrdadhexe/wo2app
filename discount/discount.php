@@ -14,8 +14,8 @@ $role = "";
 $min_basket = "";
 $max_basket = "";
 $type = "";
-$categories = "";
-$products = "";
+$categories = array();
+$products = array();
 
 if(isset($_POST['create'])) {
     global $wpdb;
@@ -33,8 +33,8 @@ if(isset($_POST['create'])) {
             add_post_meta($post, 'min_basket', $_POST['min_basket']);
             add_post_meta($post, 'max_basket', $_POST['max_basket']);
             add_post_meta($post, 'type', $_POST['type']);
-            add_post_meta($post, 'categories', $_POST['categories']);
-            add_post_meta($post, 'products', $_POST['products']);
+            add_post_meta($post, 'categories', (isset($_POST['categories'])) ? $_POST['categories'] : array());
+            add_post_meta($post, 'products', (isset($_POST['products'])) ? $_POST['products'] : array());
         }
     }
     else{
@@ -54,8 +54,8 @@ elseif(isset($_REQUEST['submit_edit'])){
     update_post_meta($post_id, 'min_basket', $_POST['min_basket']);
     update_post_meta($post_id, 'max_basket', $_POST['max_basket']);
     update_post_meta($post_id, 'type', $_POST['type']);
-    update_post_meta($post_id, 'categories', $_POST['categories']);
-    update_post_meta($post_id, 'products', $_POST['products']);
+    update_post_meta($post_id, 'categories', (isset($_POST['categories'])) ? $_POST['categories'] : array());
+    update_post_meta($post_id, 'products', (isset($_POST['products'])) ? $_POST['products'] : array());
     //exit();
 }
 
@@ -90,6 +90,7 @@ foreach ( $the_query as $f ) {
 }
 
 $editable = 0;
+$edit_role = "";
 if(isset($_GET['action']) && isset($_GET['field'])){
     if($_GET['action'] == 'edit' && $_GET['field'] != ''){
         $editable = 1;
@@ -99,8 +100,8 @@ if(isset($_GET['action']) && isset($_GET['field'])){
         $min_basket = get_post_meta($post_id , 'min_basket' , true);
         $max_basket = get_post_meta($post_id , 'max_basket' , true);
         $type = get_post_meta($post_id , 'type' , true);
-        $categories = get_post_meta($post_id , 'categories' , true);
-        $products = get_post_meta($post_id , 'products' , true);
+        $categories = get_post_meta($post_id , 'categories' , true) ?: array();
+        $products = get_post_meta($post_id , 'products' , true) ?: array();
     }
 }
 
@@ -231,6 +232,7 @@ if(isset($_GET['action']) && isset($_GET['field'])){
                     if($editable == 1){
                         ?>
                         <input type="submit" class="button button-primary"  value="ویرایش"  name="submit_edit" />
+                        <input type="hidden" name="delete_id" value="<?= $post_id?>" />
                         <a href="<?= $current_url;?>" class="button" >  جدید </a>
                         <?php
                     }
@@ -240,7 +242,6 @@ if(isset($_GET['action']) && isset($_GET['field'])){
                         <?php
                     }
                     ?>
-                    <input type="hidden" name="delete_id" value="<?= $post_id?>" />
                 </td>
             </tbody>
         </table>
